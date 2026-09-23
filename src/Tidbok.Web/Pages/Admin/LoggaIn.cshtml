@@ -1,0 +1,66 @@
+@page "/admin/logga-in"
+@model LoggaInModel
+@{
+    Layout = null;
+}
+<!doctype html>
+<html lang="sv">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title>Logga in · Tidbok</title>
+    <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/css/admin.css" asp-append-version="true">
+</head>
+<body class="admin admin--login">
+    <main class="login">
+        <a class="login__brand" href="/"><span class="brand__mark" aria-hidden="true"></span>Tidbok</a>
+        <h1>Logga in för verksamheter</h1>
+
+        @if (Model.Demo.Enabled)
+        {
+            <section class="login__demo" aria-labelledby="demo-rubrik">
+                <h2 id="demo-rubrik">Prova utan konto</h2>
+                <p>Två påhittade verksamheter med schema, personal och bokningar. Ändra vad du vill, allt återställs.</p>
+                <div class="login__choices">
+                    @foreach (var b in Model.Businesses)
+                    {
+                        <form method="post" asp-page-handler="Demo">
+                            <input type="hidden" name="slug" value="@b.Slug">
+                            <button class="choice" type="submit">
+                                <span class="choice__name">@b.Name</span>
+                                <span class="choice__kind">@b.Kind</span>
+                            </button>
+                        </form>
+                    }
+                </div>
+            </section>
+        }
+
+        <section class="login__form" aria-labelledby="konto-rubrik">
+            <h2 id="konto-rubrik">Med konto</h2>
+            @if (Model.Error is not null)
+            {
+                <p class="alert" role="alert">@Model.Error</p>
+            }
+            <form method="post">
+                <input type="hidden" name="ReturnUrl" value="@Model.ReturnUrl">
+                <label class="field">
+                    <span class="field__label">E-post</span>
+                    <input type="email" name="Email" value="@Model.Email" autocomplete="username" required maxlength="120">
+                </label>
+                <label class="field">
+                    <span class="field__label">Lösenord</span>
+                    <input type="password" name="Password" autocomplete="current-password" required maxlength="200">
+                </label>
+                <button class="btn btn--primary" type="submit">Logga in</button>
+            </form>
+            @if (Model.Demo.Enabled)
+            {
+                <p class="hint">Demokontona är <code>demo@@salong-silhuett.test</code> och <code>demo@@klinik-bjorkang.test</code>, lösenord <code>@Tidbok.Data.Seed.DemoPassword</code>.</p>
+            }
+        </section>
+    </main>
+</body>
+</html>

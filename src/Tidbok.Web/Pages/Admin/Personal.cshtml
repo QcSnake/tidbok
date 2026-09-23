@@ -1,0 +1,76 @@
+@page "/admin/personal"
+@model PersonalModel
+@{
+    ViewData["Title"] = "Personal";
+}
+
+<header class="pagehead">
+    <div>
+        <p class="kicker">Personal</p>
+        <h1>Vem gör vad, och när</h1>
+    </div>
+</header>
+
+@if (Model.Flash is not null)
+{
+    <p class="flash" role="status">@Model.Flash</p>
+}
+
+<p class="lede">Arbetstiderna upprepas varje vecka. Röda dagar stängs automatiskt om det är påslaget under Inställningar. Enstaka ledigheter läggs som blockering i dagsvyn.</p>
+
+@foreach (var p in Model.People)
+{
+    <section class="card person" aria-labelledby="p-@p.Id">
+        <header class="person__head">
+            <h2 id="p-@p.Id">@p.Name</h2>
+            <p class="muted">@p.Title</p>
+        </header>
+
+        <div class="person__grid">
+            <form method="post" asp-page-handler="Services" class="person__services">
+                <input type="hidden" name="staffId" value="@p.Id">
+                <fieldset>
+                    <legend>Tjänster</legend>
+                    @foreach (var s in Model.Services)
+                    {
+                        <label class="check">
+                            <input type="checkbox" name="serviceIds" value="@s.Id" @(p.ServiceIds.Contains(s.Id) ? "checked" : "")>
+                            @s.Name @if (!s.Active) { <span class="muted">(inaktiv)</span> }
+                        </label>
+                    }
+                </fieldset>
+                <button class="btn btn--ghost" type="submit">Spara tjänster</button>
+            </form>
+
+            <form method="post" asp-page-handler="Hours" class="person__hours">
+                <input type="hidden" name="staffId" value="@p.Id">
+                <table class="hours">
+                    <caption class="sr-only">Arbetstider för @p.Name</caption>
+                    <thead><tr><th scope="col">Dag</th><th scope="col">Pass 1</th><th scope="col">Pass 2</th></tr></thead>
+                    <tbody>
+                        @for (var i = 0; i < PersonalModel.Week.Length; i++)
+                        {
+                            var shifts = Model.ShiftsFor(p.Id, PersonalModel.Week[i]);
+                            var s1 = shifts.ElementAtOrDefault(0);
+                            var s2 = shifts.ElementAtOrDefault(1);
+                            <tr>
+                                <th scope="row">@PersonalModel.WeekNames[i]</th>
+                                <td class="nowrap">
+                                    <input type="time" name="from1" step="900" value="@(s1 is null ? "" : AdminPageModel.Hhmm(s1.StartMinute))" aria-label="@PersonalModel.WeekNames[i], pass 1 börjar">
+                                    <span aria-hidden="true">-</span>
+                                    <input type="time" name="to1" step="900" value="@(s1 is null ? "" : AdminPageModel.Hhmm(s1.EndMinute))" aria-label="@PersonalModel.WeekNames[i], pass 1 slutar">
+                                </td>
+                                <td class="nowrap">
+                                    <input type="time" name="from2" step="900" value="@(s2 is null ? "" : AdminPageModel.Hhmm(s2.StartMinute))" aria-label="@PersonalModel.WeekNames[i], pass 2 börjar">
+                                    <span aria-hidden="true">-</span>
+                                    <input type="time" name="to2" step="900" value="@(s2 is null ? "" : AdminPageModel.Hhmm(s2.EndMinute))" aria-label="@PersonalModel.WeekNames[i], pass 2 slutar">
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <button class="btn btn--ghost" type="submit">Spara arbetstider</button>
+            </form>
+        </div>
+    </section>
+}

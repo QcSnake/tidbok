@@ -1,0 +1,63 @@
+@{
+    var business = ViewData["Business"] as Business;
+    var demo = ViewData["Demo"] as bool? ?? false;
+    var path = Context.Request.Path.Value ?? "";
+    string Active(string href) => (href == "/admin" ? path == "/admin" || path == "/admin/" : path.StartsWith(href)) ? "is-active" : "";
+}
+<!doctype html>
+<html lang="sv">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title>@ViewData["Title"] · @(business?.Name ?? "Tidbok")</title>
+    <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/css/admin.css" asp-append-version="true">
+    @if (business is not null)
+    {
+        <link rel="stylesheet" href="/tema/@(business.Slug).css">
+    }
+    <script src="/js/admin.js" asp-append-version="true" defer></script>
+</head>
+<body class="admin">
+    <a class="skip" href="#innehall">Hoppa till innehållet</a>
+    <div class="shell">
+        <aside class="side">
+            <a class="brand" href="/admin">
+                <span class="brand__mark" aria-hidden="true"></span>
+                <span class="brand__text">
+                    <span class="brand__name">@business?.Name</span>
+                    <span class="brand__kind">@business?.Kind</span>
+                </span>
+            </a>
+            <nav class="nav" aria-label="Admin">
+                <a class="nav__link @Active("/admin")" href="/admin">Dagen</a>
+                <a class="nav__link @Active("/admin/bokningar")" href="/admin/bokningar">Bokningar</a>
+                <a class="nav__link @Active("/admin/tjanster")" href="/admin/tjanster">Tjänster</a>
+                <a class="nav__link @Active("/admin/personal")" href="/admin/personal">Personal</a>
+                <a class="nav__link @Active("/admin/installningar")" href="/admin/installningar">Inställningar</a>
+            </nav>
+            <div class="side__foot">
+                @if (business is not null)
+                {
+                    <a class="side__public" href="/boka/@business.Slug" target="_blank" rel="noopener">Öppna bokningssidan</a>
+                }
+                <form method="post" action="/admin/logga-ut">
+                    @Html.AntiForgeryToken()
+                    <button class="linkish" type="submit">Logga ut</button>
+                </form>
+            </div>
+        </aside>
+
+        <div class="main">
+            @if (demo)
+            {
+                <p class="testbar">Öppen testmiljö. Verksamheten och kunderna är påhittade. Allt återställs när tjänsten startar om.</p>
+            }
+            <main class="content" id="innehall">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+</body>
+</html>

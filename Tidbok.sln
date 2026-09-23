@@ -1,0 +1,50 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{8D9D2785-5805-4160-A64D-5D56580E3323}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tidbok.Core", "src\Tidbok.Core\Tidbok.Core.csproj", "{8F621D6F-7E62-4732-814A-1772BA85E673}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tidbok.Data", "src\Tidbok.Data\Tidbok.Data.csproj", "{26A8426C-B721-468A-9987-D64347F64B02}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tidbok.Web", "src\Tidbok.Web\Tidbok.Web.csproj", "{C4D07D3E-91DA-484D-86BE-44FF39EA0579}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{13720D62-BF65-4C42-B008-D02C01785589}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tidbok.Tests", "tests\Tidbok.Tests\Tidbok.Tests.csproj", "{92A2857D-902E-446A-9B7E-813FAA28E013}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8F621D6F-7E62-4732-814A-1772BA85E673}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F621D6F-7E62-4732-814A-1772BA85E673}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F621D6F-7E62-4732-814A-1772BA85E673}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F621D6F-7E62-4732-814A-1772BA85E673}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26A8426C-B721-468A-9987-D64347F64B02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26A8426C-B721-468A-9987-D64347F64B02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26A8426C-B721-468A-9987-D64347F64B02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26A8426C-B721-468A-9987-D64347F64B02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4D07D3E-91DA-484D-86BE-44FF39EA0579}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4D07D3E-91DA-484D-86BE-44FF39EA0579}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4D07D3E-91DA-484D-86BE-44FF39EA0579}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4D07D3E-91DA-484D-86BE-44FF39EA0579}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92A2857D-902E-446A-9B7E-813FAA28E013}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92A2857D-902E-446A-9B7E-813FAA28E013}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92A2857D-902E-446A-9B7E-813FAA28E013}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92A2857D-902E-446A-9B7E-813FAA28E013}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8F621D6F-7E62-4732-814A-1772BA85E673} = {8D9D2785-5805-4160-A64D-5D56580E3323}
+		{26A8426C-B721-468A-9987-D64347F64B02} = {8D9D2785-5805-4160-A64D-5D56580E3323}
+		{C4D07D3E-91DA-484D-86BE-44FF39EA0579} = {8D9D2785-5805-4160-A64D-5D56580E3323}
+		{92A2857D-902E-446A-9B7E-813FAA28E013} = {13720D62-BF65-4C42-B008-D02C01785589}
+	EndGlobalSection
+EndGlobal

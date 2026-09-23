@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: tidbok
+    runtime: docker
+    plan: free
+    region: frankfurt
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: Demo__Enabled
+        value: "true"

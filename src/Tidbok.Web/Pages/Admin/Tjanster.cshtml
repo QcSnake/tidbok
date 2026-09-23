@@ -1,0 +1,61 @@
+@page "/admin/tjanster"
+@model TjansterModel
+@{
+    ViewData["Title"] = "Tjänster";
+}
+
+<header class="pagehead">
+    <div>
+        <p class="kicker">Tjänster</p>
+        <h1>Det kunderna kan boka</h1>
+    </div>
+</header>
+
+@if (Model.Flash is not null)
+{
+    <p class="flash" role="status">@Model.Flash</p>
+}
+
+<p class="lede">Tiden styr hur lång lucka som bokas. Priset visas för kunden men tas inte betalt här. En tjänst som inte är aktiv syns inte på bokningssidan, men gamla bokningar på den ligger kvar.</p>
+
+<div class="services">
+    @foreach (var s in Model.Items)
+    {
+        <form method="post" asp-page-handler="Save" class="service @(s.Active ? "" : "is-off")">
+            <input type="hidden" name="id" value="@s.Id">
+            <label class="field field--grow">
+                <span class="field__label">Namn</span>
+                <input type="text" name="name" value="@s.Name" required maxlength="60">
+            </label>
+            <label class="field field--grow">
+                <span class="field__label">Beskrivning</span>
+                <input type="text" name="description" value="@s.Description" maxlength="200">
+            </label>
+            <label class="field field--num">
+                <span class="field__label">Minuter</span>
+                <input type="number" name="minutes" value="@s.DurationMinutes" min="5" max="480" step="5" required>
+            </label>
+            <label class="field field--num">
+                <span class="field__label">Pris, kr</span>
+                <input type="number" name="price" value="@s.PriceSek" min="0" max="100000" step="1">
+            </label>
+            <label class="check"><input type="checkbox" name="from" value="true" @(s.PriceFrom ? "checked" : "")> Från-pris</label>
+            <label class="check"><input type="checkbox" name="active" value="true" @(s.Active ? "checked" : "")> Aktiv</label>
+            <button class="btn btn--ghost" type="submit">Spara</button>
+        </form>
+    }
+</div>
+
+<section class="card">
+    <h2>Ny tjänst</h2>
+    <form method="post" asp-page-handler="Save" class="service service--new">
+        <input type="hidden" name="id" value="0">
+        <input type="hidden" name="active" value="true">
+        <label class="field field--grow"><span class="field__label">Namn</span><input type="text" name="name" required maxlength="60"></label>
+        <label class="field field--grow"><span class="field__label">Beskrivning</span><input type="text" name="description" maxlength="200"></label>
+        <label class="field field--num"><span class="field__label">Minuter</span><input type="number" name="minutes" value="30" min="5" max="480" step="5" required></label>
+        <label class="field field--num"><span class="field__label">Pris, kr</span><input type="number" name="price" min="0" max="100000"></label>
+        <label class="check"><input type="checkbox" name="from" value="true"> Från-pris</label>
+        <button class="btn btn--primary" type="submit">Lägg till</button>
+    </form>
+</section>

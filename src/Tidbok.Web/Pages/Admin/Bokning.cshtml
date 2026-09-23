@@ -1,0 +1,72 @@
+@page "/admin/bokning/{id:int}"
+@model BokningModel
+@{
+    var b = Model.Item;
+    ViewData["Title"] = b.Reference;
+    var cancelled = b.Status == BookingStatus.Cancelled;
+}
+
+<header class="pagehead">
+    <div>
+        <p class="kicker"><a href="/admin?datum=@Model.Date(b.Start)">@Format.LongDate(b.Start)</a></p>
+        <h1>@(Model.Service?.Name ?? "Bokning") kl @b.Start.ToString("HH:mm")</h1>
+    </div>
+    <span class="badge @(cancelled ? "badge--off" : "badge--on")">@(cancelled ? "Avbokad" : "Bokad")</span>
+</header>
+
+@if (Model.Flash is not null)
+{
+    <p class="flash" role="status">@Model.Flash</p>
+}
+
+<div class="split">
+    <section class="card">
+        <h2>Bokningen</h2>
+        <dl class="facts">
+            <dt>Bokningsnummer</dt><dd><code>@b.Reference</code></dd>
+            <dt>Tid</dt><dd>@b.Start.ToString("HH:mm")-@b.End.ToString("HH:mm"), @Format.Minutes(b.Minutes)</dd>
+            <dt>Hos</dt><dd>@Model.Person?.Name</dd>
+            <dt>Pris</dt><dd>@(Model.Service is null ? "" : Format.Price(Model.Service))</dd>
+            <dt>Bokad</dt><dd>@b.CreatedAt.ToString("yyyy-MM-dd HH:mm")</dd>
+            @if (cancelled)
+            {
+                <dt>Avbokad</dt>
+                <dd>@b.CancelledAt?.ToString("yyyy-MM-dd HH:mm") av @(b.CancelledBy == CancelledBy.Customer ? "kunden" : "verksamheten")</dd>
+            }
+        </dl>
+    </section>
+
+    <section class="card">
+        <h2>Kunden</h2>
+        @if (b.Anonymized)
+        {
+            <p class="muted">Kunduppgifterna är gallrade. Bokningar gallras @Gallring.KeepDays dagar efter besöket.</p>
+        }
+        else
+        {
+            <dl class="facts">
+                <dt>Namn</dt><dd>@b.CustomerName</dd>
+                <dt>Telefon</dt><dd><a href="tel:@b.CustomerPhone">@b.CustomerPhone</a></dd>
+                @if (b.CustomerEmail is not null)
+                {
+                    <dt>E-post</dt><dd><a href="mailto:@b.CustomerEmail">@b.CustomerEmail</a></dd>
+                }
+                @if (b.Note is not null)
+                {
+                    <dt>Meddelande</dt><dd class="prewrap">@b.Note</dd>
+                }
+            </dl>
+        }
+    </section>
+</div>
+
+@if (!cancelled)
+{
+    <details class="danger">
+        <summary>Avboka åt kunden</summary>
+        <form method="post" asp-page-handler="Cancel" asp-route-id="@b.Id">
+            <p>Tiden blir ledig direkt och kan bokas av någon annan. Kunden får inget meddelande automatiskt.</p>
+            <button class="btn btn--danger" type="submit">Ja, avboka</button>
+        </form>
+    </details>
+}

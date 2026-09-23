@@ -1,0 +1,33 @@
+# Tidboks publika API. Öppnas i Visual Studio, Rider eller VS Code med REST Client.
+@host = http://localhost:5290
+@slug = salong-silhuett
+
+### Verksamheten, tjänster och personal
+GET {{host}}/api/businesses/{{slug}}
+
+### Lediga dagar för en tjänst, sju dagar framåt
+GET {{host}}/api/businesses/{{slug}}/days?service=2&count=7
+
+### Lediga tider en viss dag, bara hos en person
+GET {{host}}/api/businesses/{{slug}}/slots?service=2&staff=2&date=2026-10-06
+
+### Boka. 201 med avbokningslänk, 400 vid fel i uppgifterna, 409 om tiden hann tas.
+POST {{host}}/api/businesses/{{slug}}/bookings
+Content-Type: application/json
+
+{
+  "serviceId": 2,
+  "staffId": null,
+  "start": "2026-10-06T10:00",
+  "name": "Sara Lind",
+  "phone": "070-174 06 12",
+  "email": null,
+  "note": null,
+  "consent": true
+}
+
+### Bokningen, med nyckeln från länken
+GET {{host}}/api/bookings/NYCKELN-FRAN-LANKEN
+
+### Avboka
+POST {{host}}/api/bookings/NYCKELN-FRAN-LANKEN/cancel

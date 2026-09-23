@@ -1,0 +1,175 @@
+@page "/admin"
+@model IndexModel
+@{
+    ViewData["Title"] = "Dagen";
+    var iso = Model.Date.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+    string Day(int offset) => Model.Date.AddDays(offset).ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+    var isToday = Model.Date == Model.Clock.Today;
+    var nowMinute = (int)(Model.Clock.Now - Model.Clock.Today.ToDateTime(TimeOnly.MinValue)).TotalMinutes;
+    var hours = (Model.DayEnd - Model.DayStart) / 60;
+    var w = Model.Week;
+}
+
+<header class="pagehead">
+    <div>
+        <p class="kicker">@(isToday ? "I dag" : Format.ShortDate(Model.Date))</p>
+        <h1>@Format.LongDate(Model.Date)</h1>
+    </div>
+    <nav class="daynav" aria-label="Byt dag">
+        <a class="btn btn--ghost" href="/admin?datum=@Day(-1)" aria-label="Föregående dag">Föregående</a>
+        @if (!isToday)
+        {
+            <a class="btn btn--ghost" href="/admin">I dag</a>
+        }
+        <a class="btn btn--ghost" href="/admin?datum=@Day(1)" aria-label="Nästa dag">Nästa</a>
+        <form class="daynav__pick" method="get" action="/admin">
+            <label class="sr-only" for="datum">Välj datum</label>
+            <input id="datum" type="date" name="datum" value="@iso" data-autosubmit>
+            <noscript><button class="btn btn--ghost" type="submit">Visa</button></noscript>
+        </form>
+    </nav>
+</header>
+
+@if (Model.Flash is not null)
+{
+    <p class="flash" role="status">@Model.Flash</p>
+}
+
+<section class="stats" aria-label="Veckan">
+    <div class="stat">
+        <p class="stat__label">Bokningar vecka @System.Globalization.ISOWeek.GetWeekOfYear(w.Monday.ToDateTime(TimeOnly.MinValue))</p>
+        <p class="stat__value">@w.Bookings</p>
+    </div>
+    <div class="stat">
+        <p class="stat__label">Beläggning</p>
+        <p class="stat__value">@IndexModel.Percent(w.BookedMinutes, w.OpenMinutes) %</p>
+        <p class="stat__sub">@(w.BookedMinutes / 60) av @(w.OpenMinutes / 60) timmar bokade</p>
+    </div>
+    <div class="stat">
+        <p class="stat__label">Avbokningar i veckan</p>
+        <p class="stat__value">@w.Cancelled</p>
+    </div>
+    <div class="stat">
+        <p class="stat__label">Nya bokningar, 7 dagar</p>
+        <p class="stat__value">@w.NewLast7</p>
+    </div>
+</section>
+
+@if (Model.HolidayName is not null && Model.Business.Settings.ClosedOnHolidays)
+{
+    <p class="notice">@Model.HolidayName. Dagen är stängd för bokning på nätet.</p>
+}
+
+<section class="day" aria-label="Schema för dagen" data-hours="@hours">
+    <div class="day__axis" aria-hidden="true">
+        @for (var m = Model.DayStart; m < Model.DayEnd; m += 60)
+        {
+            <span class="day__hour" data-top="@Model.Pos(m)">@AdminPageModel.Hhmm(m)</span>
+        }
+    </div>
+    <div class="day__cols">
+        @foreach (var col in Model.Columns)
+        {
+            <div class="col">
+                <div class="col__head">
+                    <p class="col__name">@col.Person.Name</p>
+                    <p class="col__sub">
+                        @if (col.Shifts.Count == 0) { <text>Ledig</text> }
+                        else { @string.Join(", ", col.Shifts.Select(s => $"{AdminPageModel.Hhmm(s.StartMinute)}-{AdminPageModel.Hhmm(s.EndMinute)}")) }
+                    </p>
+                </div>
+                <div class="lane">
+                    @foreach (var s in col.Shifts)
+                    {
+                        <span class="shift" data-top="@Model.Pos(s.StartMinute)" data-h="@Model.Pos(Model.DayStart + s.EndMinute - s.StartMinute)"></span>
+                    }
+                    @foreach (var i in col.Items)
+                    {
+                        var h = Model.Pos(Model.DayStart + i.End - i.Start);
+                        if (i.Kind == "booking")
+                        {
+                            <a class="item item--booking @(i.End - i.Start <= 30 ? "item--short" : "")" href="@i.Href" data-top="@Model.Pos(i.Start)" data-h="@h">
+                                <span class="item__title">@i.Title</span>
+                                <span class="item__sub">@i.Sub</span>
+                            </a>
+                        }
+                        else
+                        {
+                            <div class="item item--block @(i.End - i.Start <= 30 ? "item--short" : "")" data-top="@Model.Pos(i.Start)" data-h="@h">
+                                <span class="item__title">@i.Title</span>
+                                <span class="item__sub">@i.Sub</span>
+                                <form method="post" asp-page-handler="RemoveBlock" class="item__remove">
+                                    <input type="hidden" name="id" value="@i.Id">
+                                    <input type="hidden" name="date" value="@iso">
+                                    <button type="submit" aria-label="Ta bort blockeringen @i.Title">Ta bort</button>
+                                </form>
+                            </div>
+                        }
+                    }
+                    @if (isToday && nowMinute > Model.DayStart && nowMinute < Model.DayEnd)
+                    {
+                        <span class="now" data-top="@Model.Pos(nowMinute)" aria-hidden="true"></span>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+<div class="split">
+    <section class="card">
+        <h2>Dagens bokningar</h2>
+        @if (Model.Bookings.Count == 0)
+        {
+            <p class="muted">Inga bokningar.</p>
+        }
+        else
+        {
+            <table class="table">
+                <thead><tr><th>Tid</th><th>Tjänst</th><th>Kund</th><th>Hos</th></tr></thead>
+                <tbody>
+                    @foreach (var b in Model.Bookings)
+                    {
+                        <tr>
+                            <td class="nowrap">@b.Start.ToString("HH:mm")-@b.End.ToString("HH:mm")</td>
+                            <td><a href="/admin/bokning/@b.Id">@(Model.Services.TryGetValue(b.ServiceId, out var s) ? s.Name : "")</a></td>
+                            <td>@b.CustomerName</td>
+                            <td>@(Model.StaffById.TryGetValue(b.StaffId, out var p) ? p.Name : "")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        @if (Model.CancelledToday > 0)
+        {
+            <p class="muted">@Model.CancelledToday avbokade i dag syns under <a href="/admin/bokningar?visa=avbokade">Bokningar</a>.</p>
+        }
+    </section>
+
+    <section class="card">
+        <h2>Blockera tid</h2>
+        <p class="muted">Lunch, möte, sjukdom. Tiden försvinner från bokningssidan direkt.</p>
+        <form method="post" asp-page-handler="Block" class="form">
+            <input type="hidden" name="date" value="@iso">
+            <label class="field">
+                <span class="field__label">Vem</span>
+                <select name="staffId">
+                    @foreach (var c in Model.Columns)
+                    {
+                        <option value="@c.Person.Id">@c.Person.Name</option>
+                    }
+                </select>
+            </label>
+            <div class="row">
+                <label class="field"><span class="field__label">Från</span><input type="time" name="from" required step="900" value="12:00"></label>
+                <label class="field"><span class="field__label">Till</span><input type="time" name="to" required step="900" value="13:00"></label>
+            </div>
+            <label class="field">
+                <span class="field__label">Anledning</span>
+                <input type="text" name="reason" maxlength="60" list="skal" placeholder="Till exempel lunch">
+                <datalist id="skal"><option value="Lunch"></option><option value="Möte"></option><option value="Ledig"></option><option value="Sjuk"></option><option value="Utbildning"></option></datalist>
+            </label>
+            <button class="btn btn--primary" type="submit">Blockera</button>
+        </form>
+    </section>
+</div>

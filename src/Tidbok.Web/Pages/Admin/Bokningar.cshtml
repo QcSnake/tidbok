@@ -1,0 +1,53 @@
+@page "/admin/bokningar"
+@model BokningarModel
+@{
+    ViewData["Title"] = "Bokningar";
+}
+
+<header class="pagehead">
+    <div>
+        <p class="kicker">Bokningar</p>
+        <h1>@Model.Heading</h1>
+    </div>
+</header>
+
+<div class="toolbar">
+    <form method="get" class="search" role="search">
+        <label class="sr-only" for="q">Sök på namn, telefon eller bokningsnummer</label>
+        <input id="q" type="search" name="q" value="@Model.Query" placeholder="Namn, telefon eller TB-nummer" maxlength="80">
+        <button class="btn btn--ghost" type="submit">Sök</button>
+    </form>
+    <nav class="tabs" aria-label="Urval">
+        <a class="tab @(Model.Show != "avbokade" && string.IsNullOrWhiteSpace(Model.Query) ? "is-active" : "")" href="/admin/bokningar">Kommande</a>
+        <a class="tab @(Model.Show == "avbokade" ? "is-active" : "")" href="/admin/bokningar?visa=avbokade">Avbokade</a>
+    </nav>
+</div>
+
+@if (Model.Items.Count == 0)
+{
+    <p class="muted">Inga bokningar här.</p>
+}
+else
+{
+    <div class="card card--flush">
+        <table class="table">
+            <thead>
+                <tr><th>Datum</th><th>Tid</th><th>Tjänst</th><th>Hos</th><th>Kund</th><th>Telefon</th><th>Nummer</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var b in Model.Items)
+                {
+                    <tr class="@(b.Status == BookingStatus.Cancelled ? "is-cancelled" : "")">
+                        <td class="nowrap">@Format.ShortDate(DateOnly.FromDateTime(b.Start))</td>
+                        <td class="nowrap">@b.Start.ToString("HH:mm")</td>
+                        <td><a href="/admin/bokning/@b.Id">@(Model.Services.TryGetValue(b.ServiceId, out var s) ? s.Name : "")</a></td>
+                        <td>@(Model.StaffById.TryGetValue(b.StaffId, out var p) ? p.Name : "")</td>
+                        <td>@b.CustomerName</td>
+                        <td class="nowrap">@b.CustomerPhone</td>
+                        <td><code>@b.Reference</code></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

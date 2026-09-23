@@ -1,0 +1,79 @@
+@page "/admin/installningar"
+@model InstallningarModel
+@{
+    ViewData["Title"] = "Inställningar";
+    var s = Model.Business.Settings;
+    var link = $"{Model.Origin}/boka/{Model.Business.Slug}";
+    var snippet = $"<script src=\"{Model.Origin}/widget.js\" data-tidbok=\"{Model.Business.Slug}\" defer></script>\n<button type=\"button\" data-tidbok-open>Boka tid</button>";
+}
+
+<header class="pagehead">
+    <div>
+        <p class="kicker">Inställningar</p>
+        <h1>Regler och bokningssidan</h1>
+    </div>
+</header>
+
+@if (Model.Flash is not null)
+{
+    <p class="flash" role="status">@Model.Flash</p>
+}
+
+<div class="split">
+    <section class="card">
+        <h2>Regler för bokning</h2>
+        <form method="post" asp-page-handler="Save" class="form">
+            <label class="field">
+                <span class="field__label">Starttider var</span>
+                <select name="slotMinutes">
+                    @foreach (var m in new[] { 5, 10, 15, 20, 30, 60 })
+                    {
+                        <option value="@m" selected="@(s.SlotMinutes == m)">@m minut@(m == 1 ? "" : "er")</option>
+                    }
+                </select>
+            </label>
+            <label class="field">
+                <span class="field__label">Boka senast, timmar innan</span>
+                <input type="number" name="minNoticeHours" value="@(s.MinNoticeMinutes / 60)" min="0" max="168" required>
+            </label>
+            <label class="field">
+                <span class="field__label">Boka högst, dagar framåt</span>
+                <input type="number" name="horizonDays" value="@s.HorizonDays" min="1" max="365" required>
+            </label>
+            <label class="field">
+                <span class="field__label">Kunden kan avboka själv fram till, timmar innan</span>
+                <input type="number" name="cancelCutoffHours" value="@s.CancelCutoffHours" min="0" max="336" required>
+            </label>
+            <label class="check">
+                <input type="checkbox" name="closedOnHolidays" value="true" @(s.ClosedOnHolidays ? "checked" : "")>
+                Stängt på röda dagar och aftnar (räknas fram automatiskt, även påsk och midsommar)
+            </label>
+            <button class="btn btn--primary" type="submit">Spara</button>
+        </form>
+    </section>
+
+    <section class="card">
+        <h2>Bokningssidan</h2>
+        <p>Direktlänk att dela, lägga i Instagram-profilen eller på Google:</p>
+        <p class="copyline">
+            <code id="lank">@link</code>
+            <button class="btn btn--ghost" type="button" data-copy="#lank">Kopiera</button>
+        </p>
+
+        <h3>På er egen hemsida</h3>
+        <p>Två rader kod. Knappen öppnar bokningen ovanpå sidan, besökaren lämnar aldrig er sajt.</p>
+        <pre class="code" id="kod">@snippet</pre>
+        <button class="btn btn--ghost" type="button" data-copy="#kod">Kopiera koden</button>
+    </section>
+</div>
+
+@if (Model.Demo.Enabled)
+{
+    <details class="danger">
+        <summary>Återställ testmiljön</summary>
+        <form method="post" asp-page-handler="Reset">
+            <p>Tar bort alla ändringar och bokningar och läser in exempeldatan på nytt, för båda verksamheterna.</p>
+            <button class="btn btn--danger" type="submit">Återställ</button>
+        </form>
+    </details>
+}

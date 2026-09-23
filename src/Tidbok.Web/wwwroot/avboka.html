@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <meta name="referrer" content="no-referrer">
+  <title>Din bokning</title>
+  <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/site.css">
+  <link rel="stylesheet" id="tema" href="">
+  <script src="/js/avboka.js" defer></script>
+</head>
+<body>
+  <p class="testbar">Testmiljö. Verksamheten är påhittad.</p>
+  <main class="manage">
+    <p class="kicker" id="m-business">&nbsp;</p>
+    <h1 id="m-title">Din bokning</h1>
+    <div id="error" class="alert" role="alert" hidden></div>
+
+    <section class="panel" id="m-card" hidden>
+      <p><span class="status" id="m-status"></span></p>
+      <dl class="facts">
+        <dt>Tjänst</dt><dd id="m-service"></dd>
+        <dt>Dag</dt><dd id="m-day"></dd>
+        <dt>Tid</dt><dd id="m-time"></dd>
+        <dt>Hos</dt><dd id="m-staff"></dd>
+        <dt>Adress</dt><dd id="m-address"></dd>
+        <dt>Nummer</dt><dd><code id="m-ref"></code></dd>
+      </dl>
+
+      <p class="done__actions"><a class="btn btn--line" id="m-ics" href="#">Lägg in i kalendern</a></p>
+
+      <details class="confirm" id="m-cancel" hidden>
+        <summary>Avboka tiden</summary>
+        <p>Tiden blir ledig för någon annan direkt. Det går inte att ångra.</p>
+        <button class="btn btn--danger" type="button" id="m-confirm">Ja, avboka</button>
+      </details>
+      <p class="notice" id="m-late" hidden></p>
+    </section>
+
+    <p><a id="m-again" href="/">Boka en ny tid</a></p>
+  </main>
+</body>
+</html>

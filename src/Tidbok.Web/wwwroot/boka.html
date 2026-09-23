@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Boka tid</title>
+  <meta name="description" content="Boka tid online.">
+  <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/site.css">
+  <link rel="stylesheet" id="tema" href="">
+  <script src="/js/boka.js" defer></script>
+</head>
+<body class="book">
+  <p class="testbar">Testmiljö. Verksamheten är påhittad. Skriv inga riktiga personuppgifter.</p>
+
+  <header class="book__top">
+    <div class="book__top-in">
+      <div>
+        <p class="kicker" id="b-kind">&nbsp;</p>
+        <h1 class="book__name" id="b-name">Laddar</h1>
+        <p class="book__meta" id="b-meta"></p>
+      </div>
+      <button class="btn btn--line book__close" type="button" id="close">Stäng</button>
+    </div>
+  </header>
+
+  <main class="book__main">
+    <div>
+      <ol class="steps" id="steps" aria-label="Steg">
+        <li data-step="service">Tjänst</li>
+        <li data-step="staff">Vem</li>
+        <li data-step="time">Tid</li>
+        <li data-step="details">Uppgifter</li>
+        <li data-step="done">Klart</li>
+      </ol>
+
+      <div id="error" class="alert" role="alert" hidden></div>
+
+      <!-- 1. Tjänst -->
+      <section class="panel" id="step-service" aria-labelledby="h-service">
+        <div class="panel__head"><h2 id="h-service">Vad vill du boka?</h2></div>
+        <ul class="options" id="services"><li class="skeleton" aria-label="Laddar"><i></i><i></i><i></i></li></ul>
+      </section>
+
+      <!-- 2. Vem -->
+      <section class="panel" id="step-staff" aria-labelledby="h-staff" hidden>
+        <div class="panel__head">
+          <h2 id="h-staff">Hos vem?</h2>
+          <button class="linkish back" type="button" data-back="service">Byt tjänst</button>
+        </div>
+        <ul class="options" id="staff"></ul>
+      </section>
+
+      <!-- 3. Tid -->
+      <section class="panel" id="step-time" aria-labelledby="h-time" hidden>
+        <div class="panel__head">
+          <h2 id="h-time">När passar det?</h2>
+          <button class="linkish back" type="button" data-back="staff">Byt person</button>
+        </div>
+        <div class="weeknav">
+          <button class="btn btn--line" type="button" id="prev" aria-label="Tidigare dagar">Tidigare</button>
+          <span class="weeknav__label" id="range" aria-live="polite"></span>
+          <button class="btn btn--line" type="button" id="next" aria-label="Senare dagar">Senare</button>
+        </div>
+        <div class="days" id="days" role="group" aria-label="Välj dag"></div>
+        <p class="dayhead" id="dayhead" aria-live="polite"></p>
+        <div class="slots" id="slots" role="group" aria-labelledby="dayhead"></div>
+      </section>
+
+      <!-- 4. Uppgifter -->
+      <section class="panel" id="step-details" aria-labelledby="h-details" hidden>
+        <div class="panel__head">
+          <h2 id="h-details">Dina uppgifter</h2>
+          <button class="linkish back" type="button" data-back="time">Byt tid</button>
+        </div>
+        <form class="form" id="form" novalidate>
+          <label class="field" data-field="name">
+            <span class="field__label">Namn</span>
+            <input name="name" autocomplete="name" required maxlength="80">
+          </label>
+          <div class="row2">
+            <label class="field" data-field="phone">
+              <span class="field__label">Telefon</span>
+              <input name="phone" type="tel" autocomplete="tel" required maxlength="20" inputmode="tel">
+              <span class="field__hint">Om vi behöver nå dig om tiden.</span>
+            </label>
+            <label class="field" data-field="email">
+              <span class="field__label">E-post, valfritt</span>
+              <input name="email" type="email" autocomplete="email" maxlength="120">
+            </label>
+          </div>
+          <label class="field" data-field="note">
+            <span class="field__label">Något vi bör veta? Valfritt</span>
+            <textarea name="note" maxlength="500"></textarea>
+          </label>
+          <label class="consent" data-field="consent">
+            <input type="checkbox" name="consent" value="true">
+            <span>Jag godkänner att uppgifterna sparas för bokningen. De gallras 30 dagar efter besöket. <a href="/integritet" target="_blank" rel="noopener">Så hanteras uppgifterna</a></span>
+          </label>
+          <div><button class="btn btn--accent" type="submit" id="submit">Boka tiden</button></div>
+        </form>
+      </section>
+
+      <!-- 5. Klart -->
+      <section class="panel done" id="step-done" aria-labelledby="h-done" hidden tabindex="-1">
+        <div class="done__mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+        <h2 id="h-done">Du är bokad</h2>
+        <p id="done-text"></p>
+        <p class="kicker">Bokningsnummer</p>
+        <p class="done__ref" id="done-ref"></p>
+        <div class="done__actions">
+          <a class="btn btn--accent" id="done-ics" href="#">Lägg in i kalendern</a>
+          <a class="btn btn--line" id="done-manage" href="#">Se eller avboka</a>
+        </div>
+        <p class="done__save">Spara länken, den behövs för att avboka: <code id="done-link"></code></p>
+        <p><button class="linkish" type="button" id="again">Boka en tid till</button></p>
+      </section>
+    </div>
+
+    <aside class="panel summary" aria-labelledby="h-summary">
+      <h2 id="h-summary">Din bokning</h2>
+      <dl>
+        <div><dt>Tjänst</dt><dd id="s-service" class="is-empty">Inte vald</dd></div>
+        <div><dt>Hos</dt><dd id="s-staff" class="is-empty">Inte vald</dd></div>
+        <div><dt>Dag</dt><dd id="s-day" class="is-empty">Inte vald</dd></div>
+        <div><dt>Tid</dt><dd id="s-time" class="is-empty">Inte vald</dd></div>
+      </dl>
+      <p class="summary__policy" id="s-policy"></p>
+    </aside>
+  </main>
+
+  <footer class="book__foot">Bokning via <a href="/">Tidbok</a> · <a href="/integritet">Integritet</a></footer>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tidbok · onlinebokning för småföretag</title>
+  <meta name="description" content="Tidbok är ett bokningssystem för småföretag. Kunden bokar själv på er hemsida, ni ser dagen i en vy. Byggt i C# och .NET 8 av Abdimalik Hassan.">
+  <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/site.css">
+  <script src="/widget.js" data-tidbok="salong-silhuett" defer></script>
+</head>
+<body>
+  <header class="site-top">
+    <div class="site-top__in">
+      <a class="logo" href="/"><span class="logo__mark" aria-hidden="true"></span>Tidbok</a>
+      <nav aria-label="Sidan">
+        <a href="#prova">Prova</a>
+        <a href="#sa-funkar-det">Så funkar det</a>
+        <a href="#pa-er-sajt">På er sajt</a>
+        <a href="#tekniken">Tekniken</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap hero">
+      <div>
+        <p class="kicker">Onlinebokning för småföretag</p>
+        <h1>Kunderna bokar själva. Ni slipper telefonen mitt i en klippning.</h1>
+        <p class="hero__lede">Kunden väljer tjänst, person och tid direkt på er hemsida. Ni ser hela dagen i en vy, blockerar lunch på två klick, och röda dagar stänger sig själva.</p>
+        <div class="hero__actions">
+          <a class="btn btn--accent" href="/boka/salong-silhuett">Boka som kund</a>
+          <a class="btn btn--line" href="/admin/logga-in">Se det som personalen ser</a>
+        </div>
+      </div>
+      <figure class="hero__shot">
+        <img src="/img/boka.webp" width="1100" height="820" alt="Bokningssidan för Salong Silhuett med veckans dagar och lediga tider.">
+      </figure>
+    </div>
+
+    <section class="section" id="prova">
+      <div class="wrap">
+        <header class="section__head">
+          <p class="kicker">Prova</p>
+          <h2>Två påhittade verksamheter, allt på riktigt</h2>
+          <p>Bokningarna sparas i databasen, tiderna försvinner när någon tar dem och adminvyn uppdateras direkt. Testmiljön återställs när tjänsten startar om.</p>
+        </header>
+        <div class="demo-list">
+          <article class="demo">
+            <p class="demo__kind">Frisörsalong, Örebro</p>
+            <h3>Salong Silhuett</h3>
+            <p>Tre stylister med olika tjänster och scheman, lunch mitt på dagen, lördagsöppet.</p>
+            <div class="demo__actions">
+              <a class="btn btn--accent" href="/boka/salong-silhuett">Boka en tid</a>
+              <a class="btn btn--line" href="/admin/logga-in">Logga in som salongen</a>
+            </div>
+          </article>
+          <article class="demo">
+            <p class="demo__kind">Tandvårdsklinik, Örebro</p>
+            <h3>Klinik Björkäng</h3>
+            <p>Tandläkare och tandhygienist, fyra timmars framförhållning och kortare fredagar.</p>
+            <div class="demo__actions">
+              <a class="btn btn--accent" href="/boka/klinik-bjorkang">Boka en tid</a>
+              <a class="btn btn--line" href="/admin/logga-in">Logga in som kliniken</a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="sa-funkar-det">
+      <div class="wrap">
+        <header class="section__head">
+          <p class="kicker">Så funkar det</p>
+          <h2>Det som brukar gå fel med bokningar, löst från början</h2>
+        </header>
+        <div class="points">
+          <div class="point">
+            <h3><span>01</span>Ingen dubbelbokning</h3>
+            <p>Två kunder som klickar på samma tid samtidigt får inte båda den. Bokningen kontrolleras en gång till inne i ett databaslås innan den sparas, och ett test skickar tjugo samtidiga bokningar för att bevisa det.</p>
+          </div>
+          <div class="point">
+            <h3><span>02</span>Röda dagar sköter sig själva</h3>
+            <p>Påsk, Kristi himmelsfärd, midsommar och alla helgons dag räknas fram för varje år. Ingen behöver komma ihåg att stänga juldagen i januari.</p>
+          </div>
+          <div class="point">
+            <h3><span>03</span>Kunden avbokar själv</h3>
+            <p>Bekräftelsen har en egen länk och en kalenderfil. Kunden kan avboka fram till en gräns ni väljer, efter det hänvisas de till telefonen.</p>
+          </div>
+          <div class="point">
+            <h3><span>04</span>Uppgifterna gallras</h3>
+            <p>Namn, telefon och meddelande tas bort 30 dagar efter besöket. Bokningen finns kvar i statistiken, personen gör det inte.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="pa-er-sajt">
+      <div class="wrap embed">
+        <div>
+          <p class="kicker">På er sajt</p>
+          <h2>Två rader kod</h2>
+          <p>Knappen öppnar bokningen ovanpå er hemsida. Besökaren lämnar aldrig sajten, och bokningen ser ut som er med er egen färg.</p>
+          <pre class="code">&lt;script src="https://tidbok.onrender.com/widget.js"
+        data-tidbok="salong-silhuett" defer&gt;&lt;/script&gt;
+
+&lt;button type="button" data-tidbok-open&gt;Boka tid&lt;/button&gt;</pre>
+        </div>
+        <div class="embed__try">
+          <div class="fake-site__bar"><span>Salong Silhuett</span><small>exempel på en kunds sajt</small></div>
+          <p>Klippning, färg och styling i centrala Örebro.</p>
+          <button class="btn btn--accent" type="button" data-tidbok-open>Boka tid</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="tekniken">
+      <div class="wrap">
+        <header class="section__head">
+          <p class="kicker">Tekniken</p>
+          <h2>Byggt i C# och .NET 8</h2>
+          <p>Koden ligger öppen på <a href="https://github.com/QcSnake/tidbok">GitHub</a>. Hur och varför står i <a href="https://abdimalik-portfolio.onrender.com/projekt/tidbok.html">fallstudien</a>.</p>
+        </header>
+        <dl class="tech">
+          <div><dt>Backend</dt><dd>ASP.NET Core minimal API för bokningen, Razor Pages för adminvyn.</dd></div>
+          <div><dt>Data</dt><dd>SQLite med skrivlås per bokning. Tunt eget lager mot C-API:t, all SQL parametriserad.</dd></div>
+          <div><dt>Frontend</dt><dd>Vanlig JavaScript utan ramverk. Widgeten är en fil på några kilobyte.</dd></div>
+          <div><dt>Tester</dt><dd>xUnit för reglerna, flödet mot en riktig databasfil och samtidiga bokningar.</dd></div>
+          <div><dt>Säkerhet</dt><dd>Strikt CSP, PBKDF2-lösenord, begränsning av antal anrop, avbokningslänkar som bara sparas som hash.</dd></div>
+          <div><dt>Drift</dt><dd>Docker på Render. Testerna körs i bygget och stoppar en trasig version.</dd></div>
+        </dl>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-foot">
+    <div class="wrap">
+      <span>Tidbok är byggt av <a href="https://abdimalik-portfolio.onrender.com/">Abdimalik Hassan</a>, systemutvecklare i Lindesberg.</span>
+      <span><a href="/integritet">Integritet</a> · <a href="https://github.com/QcSnake/tidbok">Källkod</a></span>
+    </div>
+  </footer>
+</body>
+</html>
