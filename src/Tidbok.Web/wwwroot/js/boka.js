@@ -181,7 +181,14 @@
     }));
   }
 
-  const short = (reason) => !reason ? "" : reason.length > 9 ? "Stängt" : reason;
+  // Etiketten under datumet har plats för ett ord. Hela skälet står i knappens titel och aria-label.
+  const short = (reason) => {
+    if (!reason) return "";
+    if (reason === "Inga fler tider i dag") return "Slut";
+    if (reason === "Går inte att boka än") return "Senare";
+    if (["Stängt", "Fullbokat", "Passerat"].includes(reason)) return reason;
+    return "Röd dag";
+  };
 
   async function selectDay(date) {
     state.day = date;

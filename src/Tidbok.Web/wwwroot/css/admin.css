@@ -23,6 +23,7 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
 body { margin: 0; background: var(--paper); color: var(--ink); font: 15px/1.5 var(--font); -webkit-font-smoothing: antialiased; }
 a { color: var(--accent-deep); text-underline-offset: 3px; }
 a:hover { color: var(--accent); }
